@@ -1,6 +1,7 @@
 package net.remgant.familyclock.web;
 
 import net.remgant.familyclock.FamilyClockDAO;
+import net.remgant.familyclock.IDNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,7 +16,7 @@ public class FamilyClockController {
 
     private final static Logger log = LoggerFactory.getLogger(FamilyClockController.class);
 
-     private FamilyClockDAO familyClockDAO;
+    private FamilyClockDAO familyClockDAO;
     /*
      {cog=308,
      batt=95,
@@ -37,30 +38,36 @@ public class FamilyClockController {
 
     @RequestMapping(value = "/tracking", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    void processTrackingData(@RequestBody Map<String,Object> data) {
-        log.info("recieved data: {}",data);
+    void processTrackingData(@RequestBody Map<String, Object> data) {
+        log.info("recieved data: {}", data);
 
         if (!data.containsKey("_type") || !data.get("_type").equals("location"))
             return;
 
-        double lat =  ((Number)data.get("lat")).doubleValue();
-        double lon = ((Number)data.get("lon")).doubleValue();
-        double acc = ((Number)data.get("acc")).doubleValue();
-        double alt = ((Number)data.get("alt")).doubleValue();
-        double vac = ((Number)data.get("vac")).doubleValue();
-        int ts = ((Number)data.get("tst")).intValue();
-        String id = (String)data.get("tid");
-        log.info("lon = {}, lat = {}, alt = {}, ts = {}",lon,lat,alt, new Date(ts*1000L));
-        familyClockDAO.addLocationData(id, new Date(ts*1000L), lat, lon, acc, alt, vac);
+        double lat = ((Number) data.get("lat")).doubleValue();
+        double lon = ((Number) data.get("lon")).doubleValue();
+        double acc = ((Number) data.get("acc")).doubleValue();
+        double alt = ((Number) data.get("alt")).doubleValue();
+        double vac = ((Number) data.get("vac")).doubleValue();
+        int ts = ((Number) data.get("tst")).intValue();
+        String id = (String) data.get("tid");
+        log.info("lon = {}, lat = {}, alt = {}, ts = {}", lon, lat, alt, new Date(ts * 1000L));
+        familyClockDAO.addLocationData(id, new Date(ts * 1000L), lat, lon, acc, alt, vac);
     }
 
     @RequestMapping(value = "/location/{name}", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String,Object> findLocationFor(@PathVariable("name") String name) {
+    public Map<String, Object> findLocationFor(@PathVariable("name") String name) {
         String location = familyClockDAO.findLocation(name);
         if (location == null)
-            return  Collections.singletonMap(name,"unkown");
-        return Collections.singletonMap(name,location);
+            return Collections.singletonMap(name, "unkown");
+        return Collections.singletonMap(name, location);
+
+    }
+
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "User not found")
+    @ExceptionHandler(IDNotFoundException.class)
+    public void userNotFound() {
 
     }
 

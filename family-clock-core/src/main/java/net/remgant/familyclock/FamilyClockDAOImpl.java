@@ -1,22 +1,22 @@
 package net.remgant.familyclock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import javax.sql.DataSource;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.net.IDN;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 public class FamilyClockDAOImpl implements FamilyClockDAO {
+    private final static Logger log = LoggerFactory.getLogger(FamilyClockDAOImpl.class);
     private JdbcTemplate jdbcTemplate;
 
-
+    @SuppressWarnings("unused")
     public FamilyClockDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -25,39 +25,52 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @Override
     public void addLocationData(String id, Date timestamp, double lat, double lon, double acc, double alt, double vac) {
-        int memberId = jdbcTemplate.queryForObject("select id from member where name = ?", new Object[]{id}, Integer.class);
+        int memberId;
+        try {
+            //noinspection ConstantConditions
+            memberId = jdbcTemplate.queryForObject("select id from member where name = ?", new Object[]{id}, Integer.class);
+        } catch (EmptyResultDataAccessException emrdae) {
+            log.warn("no such user {}",id);
+            throw new IDNotFoundException("no such user: "+id);
+        }
         jdbcTemplate.update("insert into tracking (member_id,time,lat,lon,acc,alt,vac) values(?,?,?,?,?,?,?)",
-                new Object[]{memberId, timestamp, lat, lon, acc, alt, vac});
+                memberId, timestamp, lat, lon, acc, alt, vac);
     }
 
+    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @Override
     public String findLocation(String name) {
-        int memberId = jdbcTemplate.queryForObject("select id from member where name = ?", new Object[]{name}, Integer.class);
-        Map<String, Object> map = jdbcTemplate.queryForMap("select lat,lon,acc from tracking where member_id = ? order by time desc limit 1", new Object[]{memberId});
+        int memberId;
+        try {
+            //noinspection ConstantConditions
+            memberId = jdbcTemplate.queryForObject("select id from member where name = ?", new Object[]{name}, Integer.class);
+        } catch (EmptyResultDataAccessException emrdae) {
+            log.warn("no such user {}",name);
+            return "unknown";
+        }
+        Map<String, Object> map = jdbcTemplate.queryForMap("select lat,lon,acc from tracking where member_id = ? order by time desc limit 1", memberId);
         double lat1 = Math.toRadians((double) map.get("lat"));
         double lon1 = Math.toRadians((double) map.get("lon"));
         double acc = (double) map.get("acc");
-        final List<String> list = new ArrayList();
-        jdbcTemplate.query("select name, lat, lon, radius from location where owner_id = ?", new Object[]{memberId}, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet resultSet) throws SQLException {
-                double lat2 = Math.toRadians(resultSet.getDouble(2));
-                double lon2 = Math.toRadians(resultSet.getDouble(3));
+        final List<String> list = new ArrayList<>();
+        jdbcTemplate.query("select name, lat, lon, radius from location where owner_id = ?", new Object[]{memberId}, resultSet -> {
+            double lat2 = Math.toRadians(resultSet.getDouble(2));
+            double lon2 = Math.toRadians(resultSet.getDouble(3));
 
-                double dlon = lon2 - lon1;
-                double dlat = lat2 - lat1;
-                double a = Math.pow(Math.sin(dlat / 2), 2)
-                        + Math.cos(lat1) * Math.cos(lat2)
-                        * Math.pow(Math.sin(dlon / 2), 2);
-                double c = 2 * Math.asin(Math.sqrt(a));
-                double r = 6371;
-                double d = c * r * 1000.0;
-                double rad = resultSet.getDouble(4);
-                if (d <= rad + acc)
-                    list.add(resultSet.getString(1));
-            }
+            double dlon = lon2 - lon1;
+            double dlat = lat2 - lat1;
+            double a = Math.pow(Math.sin(dlat / 2), 2)
+                    + Math.cos(lat1) * Math.cos(lat2)
+                    * Math.pow(Math.sin(dlon / 2), 2);
+            double c = 2 * Math.asin(Math.sqrt(a));
+            double r = 6371;
+            double d = c * r * 1000.0;
+            double rad = resultSet.getDouble(4);
+            if (d <= rad + acc)
+                list.add(resultSet.getString(1));
         });
 
         if (list.size() > 0)
