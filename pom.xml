@@ -83,6 +83,18 @@
                 <version>${spring.framework.boot.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test</artifactId>
+                <version>${spring.framework.boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-test-autoconfigure</artifactId>
+                <version>${spring.framework.boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
                 <version>2.9.5</version>
@@ -126,9 +138,15 @@
                 <version>4.12</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>1.5.0</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -161,13 +179,13 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>rpm-maven-plugin</artifactId>
                 <executions>
-                         <execution>
-                           <id>generate-rpm</id>
-                           <goals>
-                             <goal>rpm</goal>
-                           </goals>
-                         </execution>
-                       </executions>
+                    <execution>
+                        <id>generate-rpm</id>
+                        <goals>
+                            <goal>rpm</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <group>Applications/Internet</group>
                     <release>${build.number}</release>
@@ -177,7 +195,9 @@
                             <directory>/usr/share/tomcat</directory>
                             <sources>
                                 <source>
-                                    <location>${project.basedir}/family-clock-war/target/family-clock-war-${version}.war</location>
+                                    <location>
+                                        ${project.basedir}/family-clock-war/target/family-clock-war-${version}.war
+                                    </location>
                                 </source>
                                 <source>
                                     <location>${project.basedir}/family-clock-war/conf/context.xml</location>

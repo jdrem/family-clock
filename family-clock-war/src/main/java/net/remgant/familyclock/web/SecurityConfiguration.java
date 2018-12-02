@@ -15,10 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
@@ -39,10 +37,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
+
         httpSecurity.csrf().disable()
+                .antMatcher("/tracking")
                 .authorizeRequests()
-                .antMatchers("**/tracking").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest()
+                .hasRole("USER")
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(basciAuthEntryPoint());
@@ -58,7 +58,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
             }
 
             @Override
-            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+            public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.addHeader("WWW-Authenticate", "Basic realm=" + REALM);
                 log.warn("Authentication failure: {}", authException.getMessage());
@@ -67,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity webSecurity) throws Exception {
+    public void configure(WebSecurity webSecurity) {
         webSecurity.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 }
