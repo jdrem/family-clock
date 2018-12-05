@@ -14,7 +14,7 @@ public class ClockBuilderTest {
                 .position("Home", 0.0)
                 .position("Work", Math.PI / 3.0)
                 .position("School", 2.0 * Math.PI / 3.0)
-                .position("Studying", Math.PI / 2.0)
+                .position("Studying", Math.PI)
                 .position("Eating", 4.0 * Math.PI / 3.0)
                 .position("Unkown", 5.0 * Math.PI / 3.0)
                 .pointer("JR", 140.0, Math.PI / 3.0 + Math.PI, Color.BLUE)

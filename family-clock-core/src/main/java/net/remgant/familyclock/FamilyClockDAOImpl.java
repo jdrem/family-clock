@@ -4,13 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowCallbackHandler;
 
 import javax.sql.DataSource;
+import java.awt.*;
 import java.net.IDN;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class FamilyClockDAOImpl implements FamilyClockDAO {
     private final static Logger log = LoggerFactory.getLogger(FamilyClockDAOImpl.class);
@@ -56,7 +58,7 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
         double lon1 = Math.toRadians((double) map.get("lon"));
         double acc = (double) map.get("acc");
         final List<String> list = new ArrayList<>();
-        jdbcTemplate.query("select name, lat, lon, radius from location where owner_id = ?", new Object[]{memberId}, resultSet -> {
+        jdbcTemplate.query("select name, lat, lon, radius from location where owner_id = ? order by priority desc", new Object[]{memberId}, resultSet -> {
             double lat2 = Math.toRadians(resultSet.getDouble(2));
             double lon2 = Math.toRadians(resultSet.getDouble(3));
 
@@ -69,6 +71,7 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
             double r = 6371;
             double d = c * r * 1000.0;
             double rad = resultSet.getDouble(4);
+            log.info("{} {} {} {} {} {} {}", name,lat1,lon1,lat2,lon2,d,rad);
             if (d <= rad + acc)
                 list.add(resultSet.getString(1));
         });
@@ -76,5 +79,14 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
         if (list.size() > 0)
             return list.get(0);
         return null;
+    }
+
+    @Override
+    public Map<String, Object> findMembers() {
+        Map<String,Object> map = new HashMap<>();
+        jdbcTemplate.query("select name from member", resultSet -> {
+            map.put(resultSet.getString(1),resultSet.getString(1));
+        });
+       return map;
     }
 }

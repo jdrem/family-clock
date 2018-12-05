@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Date;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,6 +55,11 @@ public class SecurityConfigurationTest {
                 @Override
                 public String findLocation(String name) {
                     return "home";
+                }
+
+                @Override
+                public Map<String, Object> findMembers() {
+                    return null;
                 }
             };
         }

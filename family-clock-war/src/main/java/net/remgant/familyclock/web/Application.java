@@ -1,5 +1,6 @@
 package net.remgant.familyclock.web;
 
+import net.remgant.familyclock.ClockFactory;
 import net.remgant.familyclock.FamilyClockDAO;
 import net.remgant.familyclock.FamilyClockDAOImpl;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +12,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jmx.export.MBeanExporter;
 import org.springframework.jmx.export.annotation.AnnotationMBeanExporter;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -18,6 +21,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 @SpringBootApplication
+@EnableScheduling
 public class Application extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
@@ -47,12 +51,37 @@ public class Application extends SpringBootServletInitializer {
     public FamilyClockController familyClockController() {
         FamilyClockController controller = new FamilyClockController();
         controller.setFamilyClockDAO(familyClockDAO());
+        controller.setClockFactory(clockFactory());
         return controller;
     }
 
     @Bean
     public FamilyClockDAO familyClockDAO() {
         return new FamilyClockDAOImpl(dataSource());
+    }
+
+    @Bean
+    public ClockFactory clockFactory() {
+        return new ClockFactory(familyClockDAO());
+    }
+
+    @Bean
+    public ClockFactoryWrapper clockFactoryWrapper() {
+        return new ClockFactoryWrapper(clockFactory());
+    }
+
+    public static class ClockFactoryWrapper {
+        ClockFactory clockFactory;
+
+        public ClockFactoryWrapper(ClockFactory clockFactory) {
+            this.clockFactory = clockFactory;
+        }
+
+        @Scheduled(cron = "0 */5 * * * *")
+        public void refresh() {
+            if (clockFactory != null)
+                clockFactory.refresh();
+        }
     }
 
     @Bean

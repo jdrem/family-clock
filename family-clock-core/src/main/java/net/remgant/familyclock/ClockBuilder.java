@@ -59,9 +59,9 @@ public class ClockBuilder {
     }
 
     public byte[] build() {
-        BufferedImage image = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage image = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
          Graphics2D g = image.createGraphics();
-         drawCircle3(g, positionNames, positionAngles);
+         drawCircle(g, positionNames, positionAngles);
          for (int i=0; i<pointerNames.size(); i++) {
             drawPointer(g, pointerNames.get(i), pointerOffsets.get(i), pointerAngles.get(i), pointerColors.get(i));
          }
@@ -74,9 +74,9 @@ public class ClockBuilder {
         return baos.toByteArray();
     }
 
-    void drawCircle3(Graphics2D g, List<String> names, List<Double> angles) {
+    private void drawCircle(Graphics2D g, List<String> names, List<Double> angles) {
           g.setColor(Color.WHITE);
-          g.fill(new Rectangle2D.Double(0.0, 0.0, 800, 800));
+          g.fill(new Rectangle2D.Double(0.0, 0.0, width, height));
           double d = 700.0;
           Ellipse2D.Double e = new Ellipse2D.Double(-d / 2.0, -d / 2.0, d, d);
           Area a = new Area();
@@ -84,7 +84,7 @@ public class ClockBuilder {
           d = 675.0;
           e = new Ellipse2D.Double(-d / 2.0, -d / 2.0, d, d);
           a.subtract(new Area(e));
-          a.transform(AffineTransform.getTranslateInstance(400.0, 400.0));
+          a.transform(AffineTransform.getTranslateInstance(width/2.0, height/2.0));
           g.setColor(Color.BLACK);
           g.fill(a);
 
@@ -96,16 +96,15 @@ public class ClockBuilder {
               double r = d / 2.0 + 2.5 * gv.getOutline().getBounds2D().getHeight();
               Area v = new Area(gv.getOutline());
               double theta = angles.get(i);
-              //v.transform(AffineTransform.getRotateInstance(theta));
               v.transform(AffineTransform.getTranslateInstance(-gv.getOutline().getBounds2D().getWidth() / 2.0,
                       gv.getOutline().getBounds2D().getHeight() / 2.0));
-              v.transform(AffineTransform.getTranslateInstance(400.0, 400.0));
+              v.transform(AffineTransform.getTranslateInstance(width/2.0, height/2.0));
               v.transform(AffineTransform.getTranslateInstance(r * Math.cos(theta - Math.PI / 2.0), r * Math.sin(theta - Math.PI / 2.0)));
               g.fill(v);
           }
       }
 
-      void drawPointer(Graphics2D g, String name, double offset, double rotation, Color color) {
+      private void drawPointer(Graphics2D g, String name, double offset, double rotation, Color color) {
           Area a = new Area();
 
           Rectangle2D.Double r = new Rectangle2D.Double(-5.0, 0.0, 10.0, 200.0);
@@ -124,15 +123,12 @@ public class ClockBuilder {
           c = new Ellipse2D.Double(-2.5, -2.5, 5.0, 5.0);
           a.subtract(new Area(c));
 
-  //        c = new Ellipse2D.Double(-25.0, 100.0, 50.0, 50.0);
           c = new Ellipse2D.Double(-25.0, offset, 50.0, 50.0);
           a.add(new Area(c));
-  //        c = new Ellipse2D.Double(-22.5, 102.5, 45.0, 45.0);
           c = new Ellipse2D.Double(-22.5, offset + 2.5, 45.0, 45.0);
 
           a.subtract(new Area(c));
 
-  //        a.transform(AffineTransform.getRotateInstance(Math.PI / 3.0));
           a.transform(AffineTransform.getRotateInstance(rotation));
 
           a.transform(AffineTransform.getTranslateInstance(400.0, 400.0));
@@ -147,13 +143,9 @@ public class ClockBuilder {
           v.transform(AffineTransform.getScaleInstance(-1.0, -1.0));
           double xoff = gv.getOutline().getBounds2D().getWidth() / 2.0;
           double yoff = gv.getOutline().getBounds().getHeight();
-  //        v.transform(AffineTransform.getTranslateInstance(xoff, 100.0+yoff));
           v.transform(AffineTransform.getTranslateInstance(xoff, offset + yoff));
-
-
-  //        v.transform(AffineTransform.getRotateInstance(Math.PI / 3.0));
           v.transform(AffineTransform.getRotateInstance(rotation));
-          v.transform(AffineTransform.getTranslateInstance(400.0, 400.0));
+          v.transform(AffineTransform.getTranslateInstance(height/2.0, width/2.0));
           g.setColor(color);
           g.fill(v);
 

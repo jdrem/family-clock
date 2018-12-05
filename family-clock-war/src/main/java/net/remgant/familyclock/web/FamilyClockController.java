@@ -1,5 +1,6 @@
 package net.remgant.familyclock.web;
 
+import net.remgant.familyclock.ClockFactory;
 import net.remgant.familyclock.FamilyClockDAO;
 import net.remgant.familyclock.IDNotFoundException;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ public class FamilyClockController {
     private final static Logger log = LoggerFactory.getLogger(FamilyClockController.class);
 
     private FamilyClockDAO familyClockDAO;
+    private ClockFactory clockFactory;
     /*
      {cog=308,
      batt=95,
@@ -65,6 +67,12 @@ public class FamilyClockController {
 
     }
 
+    @RequestMapping(value = "/clock.png", method = RequestMethod.GET, produces = "image/png")
+    @ResponseBody
+    public Object clock() {
+        return clockFactory.getClockImage();
+    }
+
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "User not found")
     @ExceptionHandler(IDNotFoundException.class)
     public void userNotFound() {
@@ -73,5 +81,9 @@ public class FamilyClockController {
 
     public void setFamilyClockDAO(FamilyClockDAO familyClockDAO) {
         this.familyClockDAO = familyClockDAO;
+    }
+
+    public void setClockFactory(ClockFactory clockFactory) {
+        this.clockFactory = clockFactory;
     }
 }
