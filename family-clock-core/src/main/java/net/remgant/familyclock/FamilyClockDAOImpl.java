@@ -51,13 +51,13 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
             memberId = jdbcTemplate.queryForObject("select id from member where name = ?", new Object[]{name}, Integer.class);
         } catch (EmptyResultDataAccessException emrdae) {
             log.warn("no such user {}",name);
-            return "unknown";
+            return "Unknown";
         }
         Map<String, Object> map = jdbcTemplate.queryForMap("select lat,lon,acc from tracking where member_id = ? order by time desc limit 1", memberId);
         double lat1 = Math.toRadians((double) map.get("lat"));
         double lon1 = Math.toRadians((double) map.get("lon"));
         double acc = (double) map.get("acc");
-        final List<String> list = new ArrayList<>();
+        StringBuilder location = new StringBuilder();
         jdbcTemplate.query("select name, lat, lon, radius from location where owner_id = ? order by priority desc", new Object[]{memberId}, resultSet -> {
             double lat2 = Math.toRadians(resultSet.getDouble(2));
             double lon2 = Math.toRadians(resultSet.getDouble(3));
@@ -72,12 +72,14 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
             double d = c * r * 1000.0;
             double rad = resultSet.getDouble(4);
             log.info("{} {} {} {} {} {} {}", name,lat1,lon1,lat2,lon2,d,rad);
-            if (d <= rad + acc)
-                list.add(resultSet.getString(1));
+            if (d <= rad + acc) {
+                location.setLength(0);
+                location.append(resultSet.getString(1));
+            }
         });
 
-        if (list.size() > 0)
-            return list.get(0);
+        if (location.length() > 0)
+            return location.toString();
         return null;
     }
 

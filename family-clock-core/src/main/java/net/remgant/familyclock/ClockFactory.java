@@ -21,16 +21,6 @@ public class ClockFactory {
         refresh();
     }
 
-//    Object[][] clockPositions = {
-//            {"Home", 0.0},
-//            {"Work", Math.PI / 3.0},
-//            {"School", 2.0 * Math.PI / 3.0},
-//            {"Studying", Math.PI},
-//            {"Eating", 4.0 * Math.PI / 3.0},
-//            {"Unknown", 5.0 * Math.PI / 3.0}
-//
-//    };
-
     private static Map<String, Double> clockPositiosn = new HashMap<>();
 
     static {
@@ -53,7 +43,7 @@ public class ClockFactory {
             String loc = familyClockDAO.findLocation(e.getValue().toString());
             Double angle = clockPositiosn.get(loc);
             if (angle == null)
-                angle = clockPositiosn.get("Unkown");
+                angle = clockPositiosn.get("Unknown");
             clockBuilder.pointer(e.getValue().toString(),140.0, angle + Math.PI, Color.BLUE);
         }
         clockImage = clockBuilder.build();
