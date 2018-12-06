@@ -1,7 +1,7 @@
 package net.remgant.familyclock;
 
+import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 
 public interface FamilyClockDAO {
     /*
@@ -26,5 +26,5 @@ public interface FamilyClockDAO {
 
     String findLocation(String name);
 
-    Map<String,Object> findMembers();
+    Collection<Member> findMembers();
 }

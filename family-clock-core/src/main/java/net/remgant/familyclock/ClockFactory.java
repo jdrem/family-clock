@@ -1,7 +1,7 @@
 package net.remgant.familyclock;
 
 import javax.annotation.PostConstruct;
-import java.awt.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +9,12 @@ public class ClockFactory {
 
     private FamilyClockDAO familyClockDAO;
     private byte[] clockImage;
-    Map<String, Object> members;
+    private Collection<Member> members;
+    private String[] points = new String[]{"Home","Work","School","Unkown"};
+    private Map<String, Double> clockPositiosn;
+
+    public ClockFactory() {
+    }
 
     public ClockFactory(FamilyClockDAO familyClockDAO) {
         this.familyClockDAO = familyClockDAO;
@@ -17,19 +22,12 @@ public class ClockFactory {
 
     @PostConstruct
     public void init() {
+        clockPositiosn = new HashMap<>();
+        for (int i = 0; i< points.length; i++) {
+            clockPositiosn.put(points[i],((double)i / (double) points.length) * (2.0 * Math.PI));
+        }
         members = familyClockDAO.findMembers();
         refresh();
-    }
-
-    private static Map<String, Double> clockPositiosn = new HashMap<>();
-
-    static {
-        clockPositiosn.put("Home", 0.0);
-        clockPositiosn.put("Work", Math.PI / 3.0);
-        clockPositiosn.put("School", 2.0 * Math.PI / 3.0);
-        clockPositiosn.put("Studying", Math.PI);
-        clockPositiosn.put("Eating", 4.0 * Math.PI / 3.0);
-        clockPositiosn.put("Unknown", 5.0 * Math.PI / 3.0);
     }
 
     public void refresh() {
@@ -39,17 +37,26 @@ public class ClockFactory {
             clockBuilder.position(e.getKey(), e.getValue());
         }
         clockBuilder.format("PNG");
-        for (Map.Entry<String, Object> e : members.entrySet()) {
-            String loc = familyClockDAO.findLocation(e.getValue().toString());
+        double offsets[] = new double[]{140.0, 90.0};
+        for (Member m : members) {
+            String loc = familyClockDAO.findLocation(m.getName());
             Double angle = clockPositiosn.get(loc);
             if (angle == null)
                 angle = clockPositiosn.get("Unknown");
-            clockBuilder.pointer(e.getValue().toString(),140.0, angle + Math.PI, Color.BLUE);
+            clockBuilder.pointer(m.getName(), offsets[m.getOffset()], angle + Math.PI, m.getForegroundColor());
         }
         clockImage = clockBuilder.build();
     }
 
     public byte[] getClockImage() {
         return clockImage;
+    }
+
+    public void setDao(FamilyClockDAO familyClockDAO) {
+        this.familyClockDAO = familyClockDAO;
+    }
+
+    public void setClockPoints(String[] points) {
+         this.points = points;
     }
 }

@@ -2,7 +2,10 @@ create table member
 (
 	id int auto_increment
 		primary key,
-	name char(2) null
+	name char(2) not null,
+	offset int not null,
+	fg_color varchar(12) not null null,
+	bg_color varchar(12) not null null
 )
 ;
 
@@ -34,7 +37,8 @@ create table location
 	name varchar(32) null,
 	lon double null,
 	lat double null,
-	radius double null
+	radius double null,
+	priority int not null
 )
 ;
 

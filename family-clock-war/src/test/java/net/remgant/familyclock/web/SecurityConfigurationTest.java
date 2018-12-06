@@ -1,6 +1,7 @@
 package net.remgant.familyclock.web;
 
 import net.remgant.familyclock.FamilyClockDAO;
+import net.remgant.familyclock.Member;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,8 +60,8 @@ public class SecurityConfigurationTest {
                 }
 
                 @Override
-                public Map<String, Object> findMembers() {
-                    return null;
+                public Collection<Member> findMembers() {
+                    return Collections.emptyList();
                 }
             };
         }

@@ -4,13 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
 import javax.sql.DataSource;
 import java.awt.*;
-import java.net.IDN;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.List;
 
@@ -18,7 +14,7 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
     private final static Logger log = LoggerFactory.getLogger(FamilyClockDAOImpl.class);
     private JdbcTemplate jdbcTemplate;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public FamilyClockDAOImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -83,12 +79,14 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
         return null;
     }
 
+    @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @Override
-    public Map<String, Object> findMembers() {
-        Map<String,Object> map = new HashMap<>();
-        jdbcTemplate.query("select name from member", resultSet -> {
-            map.put(resultSet.getString(1),resultSet.getString(1));
+    public Collection<Member> findMembers() {
+        List<Member> list = new ArrayList<>();
+        jdbcTemplate.query("select name, offset, fg_color, bg_color from member", rs -> {
+            list.add(new Member(rs.getString(1),rs.getInt(2),
+                    Color.decode(rs.getString(3)),Color.decode(rs.getString(4))));
         });
-       return map;
+       return list;
     }
 }

@@ -62,7 +62,10 @@ public class Application extends SpringBootServletInitializer {
 
     @Bean
     public ClockFactory clockFactory() {
-        return new ClockFactory(familyClockDAO());
+        ClockFactory clockFactory = new ClockFactory();
+        clockFactory.setDao(familyClockDAO());
+        clockFactory.setClockPoints(new String[]{"Home","Work","School","Studying","Play-ing","Eating","Unknown"});
+        return clockFactory;
     }
 
     @Bean
