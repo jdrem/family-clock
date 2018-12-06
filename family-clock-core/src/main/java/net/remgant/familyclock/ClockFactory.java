@@ -37,7 +37,7 @@ public class ClockFactory {
             clockBuilder.position(e.getKey(), e.getValue());
         }
         clockBuilder.format("PNG");
-        double offsets[] = new double[]{140.0, 90.0};
+        double offsets[] = new double[]{210.0, 160.0, 110.0, 60.0};
         for (Member m : members) {
             String loc = familyClockDAO.findLocation(m.getName());
             Double angle = clockPositiosn.get(loc);

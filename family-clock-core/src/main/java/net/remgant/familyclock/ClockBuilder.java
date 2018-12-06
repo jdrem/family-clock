@@ -107,15 +107,15 @@ public class ClockBuilder {
       private void drawPointer(Graphics2D g, String name, double offset, double rotation, Color color) {
           Area a = new Area();
 
-          Rectangle2D.Double r = new Rectangle2D.Double(-5.0, 0.0, 10.0, 200.0);
+          Rectangle2D.Double r = new Rectangle2D.Double(-5.0, 0.0, 10.0, 270.0);
           a.add(new Area(r));
 
           Path2D.Double p = new Path2D.Double();
-          p.moveTo(0.0, 200.0);
-          p.lineTo(20.0, 200.0);
-          p.lineTo(0.0, 245.0);
-          p.lineTo(-20.0, 200.0);
-          p.lineTo(0.0, 200.0);
+          p.moveTo(0.0, 270.0);
+          p.lineTo(20.0, 270.0);
+          p.lineTo(0.0, 315.0);
+          p.lineTo(-20.0, 270.0);
+          p.lineTo(0.0, 270.0);
           a.add(new Area(p));
 
           Ellipse2D.Double c = new Ellipse2D.Double(-12.5, -12.5, 25.0, 25.0);
