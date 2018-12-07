@@ -17,10 +17,10 @@ public class ClockBuilderTest {
                 .position("Studying", Math.PI)
                 .position("Eating", 4.0 * Math.PI / 3.0)
                 .position("Unkown", 5.0 * Math.PI / 3.0)
-                .pointer("JR", 210.0, Math.PI / 3.0 + Math.PI, Color.BLUE)
-                .pointer("GR", 160.0, 2.0 * Math.PI / 3.0 + Math.PI, Color.MAGENTA)
-                .pointer("SR",110.0, Math.PI  + Math.PI, Color.ORANGE)
-                .pointer("SG",60.0, 4.0 * Math.PI / 3.0  + Math.PI, Color.GREEN)
+                .pointer("XX", 210.0, Math.PI / 3.0 + Math.PI, Color.BLUE)
+                .pointer("YY", 160.0,  Math.PI / 3.0 + Math.PI, Color.MAGENTA)
+                .pointer("ZZ",110.0, Math.PI  + Math.PI, Color.ORANGE)
+                .pointer("AA",60.0, 4.0 * Math.PI / 3.0  + Math.PI, Color.GREEN)
                 .format("PNG")
                 .build();
         FileOutputStream fos = new FileOutputStream("Clock.png");
