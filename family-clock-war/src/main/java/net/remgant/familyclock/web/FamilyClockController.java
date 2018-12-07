@@ -50,7 +50,7 @@ public class FamilyClockController {
         double lon = ((Number) data.get("lon")).doubleValue();
         double acc = ((Number) data.get("acc")).doubleValue();
         double alt = ((Number) data.get("alt")).doubleValue();
-        double vac = ((Number) data.get("vac")).doubleValue();
+        double vac = data.containsKey ("vac") ? ((Number) data.get("vac")).doubleValue() : 0.0;
         int ts = ((Number) data.get("tst")).intValue();
         String id = (String) data.get("tid");
         log.info("lon = {}, lat = {}, alt = {}, ts = {}", lon, lat, alt, new Date(ts * 1000L));
