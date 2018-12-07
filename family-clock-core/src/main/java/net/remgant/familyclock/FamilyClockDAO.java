@@ -2,6 +2,8 @@ package net.remgant.familyclock;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public interface FamilyClockDAO {
     /*
@@ -24,7 +26,13 @@ public interface FamilyClockDAO {
         */
     void addLocationData(String id, Date timestamp, double lon, double lat, double acc, double alt, double vac);
 
+    @Deprecated
     String findLocation(String name);
 
     Collection<Member> findMembers();
+
+    Map<String,Object> findCurrentLocation(String name);
+
+    List<Map<String,Object>> findLocationsForName(String name);
+
 }

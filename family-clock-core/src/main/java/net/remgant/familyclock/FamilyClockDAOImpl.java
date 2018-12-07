@@ -40,6 +40,7 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
 
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
     @Override
+    @Deprecated
     public String findLocation(String name) {
         int memberId;
         try {
@@ -77,6 +78,19 @@ public class FamilyClockDAOImpl implements FamilyClockDAO {
         if (location.length() > 0)
             return location.toString();
         return null;
+    }
+
+    @Override
+    public Map<String, Object> findCurrentLocation(String name) {
+        return jdbcTemplate.queryForMap("select lat,lon,acc from tracking t,member m  " +
+                "where t.member_id = m.id and m.name = ? order by time desc limit 1", name);
+
+    }
+
+
+    public List<Map<String,Object>> findLocationsForName(String name) {
+        return jdbcTemplate.queryForList("select l.name, l.lat, l.lon, l.radius from location l, member m " +
+                "where l.owner_id = m.id and m.name = ? order by priority desc", new Object[]{name});
     }
 
     @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
