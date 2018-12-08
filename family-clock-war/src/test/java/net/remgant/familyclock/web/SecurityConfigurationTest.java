@@ -16,9 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -62,6 +60,16 @@ public class SecurityConfigurationTest {
                 @Override
                 public Collection<Member> findMembers() {
                     return Collections.emptyList();
+                }
+
+                @Override
+                public Map<String, Object> findCurrentLocation(String name) {
+                    return null;
+                }
+
+                @Override
+                public List<Map<String, Object>> findLocationsForName(String name) {
+                    return null;
                 }
             };
         }
