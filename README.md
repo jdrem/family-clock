@@ -1,13 +1,13 @@
-##Family Clock
+## Family Clock
 This is a web based family clock inspired by a clock featured in a
 very famous book (and movie) series about wizards.  Each family
 member is assigned a hand and the hand points to a location.
 
-#Building
+# Building
 
-#Configuring
+# Configuring
 
-#Running the Server as a Docker Containter
+# Running the Server as a Docker Containter
 This is designed to run as a war using the [Unidata hardened Tomcat server](https://github.com/Unidata/tomcat-docker).
 
 Presume you're running under some kind of Linux, you installed using rpm, you've used Let's Encrypt 
