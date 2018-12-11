@@ -236,7 +236,7 @@ grant codeBase "file:${catalina.home}/webapps/host-manager/-" {
 };
 
 grant codeBase "file:${catalina.base}/webapps/ROOT/-" {
-    permission java.security.AllPermission;                     !
+    permission java.security.AllPermission;
 };
 
 // You can assign additional permissions to particular web applications by
@@ -250,6 +250,7 @@ grant codeBase "file:${catalina.base}/webapps/ROOT/-" {
 // For instance, assume that the standard "examples" application
 // included a JDBC driver that needed to establish a network connection to the
 // corresponding database and used the scrape taglib to get the weather from
+
 // the NOAA web server.  You might create a "grant" entries like this:
 //
 // The permissions granted to the context root directory apply to JSP pages.
