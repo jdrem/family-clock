@@ -1,13 +1,13 @@
-## Family Clock
+# Family Clock
 This is a web based family clock inspired by a clock featured in a
 very famous book (and movie) series about wizards.  Each family
 member is assigned a hand and the hand points to a location.
 
-# Building
+## Building
 
-# Configuring
+## Configuring
 
-# Running the Server as a Docker Containter
+## Running the Server as a Docker Containter
 This is designed to run as a war using the [Unidata hardened Tomcat server](https://github.com/Unidata/tomcat-docker).
 
 Presume you're running under some kind of Linux, you installed using rpm, you've used Let's Encrypt 
@@ -20,9 +20,9 @@ docker run -it -d \
 -p 443:8443 \
 -v /usr/share/tomcat/family-clock-war-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/ROOT.war \
 -v /usr/share/tomcat/context.xml:/usr/local/tomcat/conf/context.xml \
+-v /usr/share/tomcat/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
+-v /usr/share/tomcat/tomcat/catalina.policy:/usr/local/tomcat/conf/catalina.policy \
 -v /home/ec2-user/tomcat/logs:/usr/local/tomcat/logs \
--v /home/ec2-user/tomcat/server.xml:/usr/local/tomcat/conf/server.xml \
--v /home/ec2-user/tomcat/catalina.policy:/usr/local/tomcat/conf/catalina.policy \
 -v /etc/letsencrypt/live/familyclock.sample.com/fullchain.pem:/usr/local/tomcat/conf/ssl.crt \
 -v /etc/letsencrypt/live/familyclock.sample.com/privkey.pem:/usr/local/tomcat/conf/ssl.key \
 -e TOMCAT_USER_ID=`id -u` \
