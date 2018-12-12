@@ -4,6 +4,19 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          metadata-complete="false" version="3.0">
 
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>HTTPSOrHTTP</web-resource-name>
+            <url-pattern>*.ico</url-pattern>
+            <url-pattern>/img/*</url-pattern>
+            <url-pattern>/css/*</url-pattern>
+            <url-pattern>/robots.txt</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>HTTPSOnly</web-resource-name>
@@ -11,17 +24,6 @@
         </web-resource-collection>
         <user-data-constraint>
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>HTTPSOrHTTP</web-resource-name>
-            <url-pattern>*.ico</url-pattern>
-            <url-pattern>/img/*</url-pattern>
-            <url-pattern>/css/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <transport-guarantee>NONE</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
 
