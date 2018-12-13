@@ -207,6 +207,12 @@
                                 <source>
                                     <location>${project.basedir}/family-clock-war/conf/context.xml</location>
                                 </source>
+                                <source>
+                                    <location>${project.basedir}/family-clock-war/conf/catalina.policy</location>
+                                </source>
+                                <source>
+                                    <location>${project.basedir}/family-clock-war/conf/server.xml</location>
+                                </source>
                             </sources>
                         </mapping>
                     </mappings>
