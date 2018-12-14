@@ -73,6 +73,20 @@ public class FamilyClockController {
         return clockFactory.getClockImage();
     }
 
+
+    @RequestMapping(value = "/clock", method = RequestMethod.GET, produces = "text/html")
+    public String clockIndex() {
+        return "<!DOCTYPE html>\r\n" +
+                "<html>\r\n" +
+                "<head>\r\n" +
+                "    <meta http-equiv=\"refresh\" content=\"60\">\r\n" +
+                "</head>\r\n" +
+                "<body>\r\n" +
+                "<img src=\"/clock.png\">\r\n" +
+                "</body>\r\n" +
+                "</html>\r\n";
+    }
+
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "User not found")
     @ExceptionHandler(IDNotFoundException.class)
     public void userNotFound() {
