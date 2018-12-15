@@ -3,6 +3,7 @@ package net.remgant.familyclock.web;
 import net.remgant.familyclock.ClockFactory;
 import net.remgant.familyclock.FamilyClockDAO;
 import net.remgant.familyclock.FamilyClockDAOImpl;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -23,6 +24,10 @@ import javax.sql.DataSource;
 @SpringBootApplication
 @EnableScheduling
 public class Application extends SpringBootServletInitializer {
+
+    @Value("${clock.positions:Home,Work,School,Unknown}")
+    String clockPositions;
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(Application.class);
@@ -64,7 +69,7 @@ public class Application extends SpringBootServletInitializer {
     public ClockFactory clockFactory() {
         ClockFactory clockFactory = new ClockFactory();
         clockFactory.setDao(familyClockDAO());
-        clockFactory.setClockPoints(new String[]{"Home","Work","School","Studying","Play-ing","Eating","Unknown"});
+        clockFactory.setClockPoints(clockPositions.split(","));
         return clockFactory;
     }
 
