@@ -89,4 +89,12 @@ public class ClockFactory {
     public void setClockPoints(String[] points) {
         this.points = points;
     }
+
+    public void pinLocationForUser(String id, String location, String fromTime, String toTIme) {
+
+    }
+
+    public void unpinLocation(String id) {
+
+    }
 }

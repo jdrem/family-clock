@@ -1,5 +1,6 @@
 package net.remgant.familyclock.web;
 
+import com.google.common.collect.ImmutableMap;
 import net.remgant.familyclock.ClockFactory;
 import net.remgant.familyclock.FamilyClockDAO;
 import net.remgant.familyclock.IDNotFoundException;
@@ -50,7 +51,7 @@ public class FamilyClockController {
         double lon = ((Number) data.get("lon")).doubleValue();
         double acc = ((Number) data.get("acc")).doubleValue();
         double alt = ((Number) data.get("alt")).doubleValue();
-        double vac = data.containsKey ("vac") ? ((Number) data.get("vac")).doubleValue() : 0.0;
+        double vac = data.containsKey("vac") ? ((Number) data.get("vac")).doubleValue() : 0.0;
         int ts = ((Number) data.get("tst")).intValue();
         String id = (String) data.get("tid");
         log.info("lon = {}, lat = {}, alt = {}, ts = {}", lon, lat, alt, new Date(ts * 1000L));
@@ -85,6 +86,62 @@ public class FamilyClockController {
                 "<img src=\"/clock.png\">\r\n" +
                 "</body>\r\n" +
                 "</html>\r\n";
+    }
+
+    /*
+        Status request looks like:
+
+        {"action":"pinLocation",
+         "configuration":{
+            "id":"JR",
+            "location":"MortalPeril",
+            "fromTime":"2018-12-11T13:00:00Z",
+            "toTime":"2018-12-11T15:30:00:00Z"}
+        }
+
+         or
+
+        {"action":"unpinLocation",
+         "configuration":{
+             "id":"JR"
+        }
+
+     */
+    @RequestMapping(value = "/status", method = RequestMethod.POST)
+    public Map<String, Object> setStatus(@RequestBody Map<String, Object> data) {
+        log.info("Got: {}", data);
+        if (!data.containsKey("action")) {
+            return ImmutableMap.of("status", "error", "errorMessage", "action missing");
+        }
+        String action = data.get("action").toString();
+        if (!action.equals("pinLocation") && !action.equals("unpinLocation")) {
+            return ImmutableMap.of("status", "error", "errorMessage", "wrong action: " + action);
+
+        }
+        if (!data.containsKey("configuration")) {
+            return ImmutableMap.of("status", "error", "errorMessage", "configuration missing");
+        }
+
+        Map<String, Object> configuration = (Map<String, Object>) data.get("configuration");
+        if (!configuration.containsKey("id")) {
+            return ImmutableMap.of("status", "error", "errorMessage", "id missing");
+
+        }
+        String id = configuration.get("id").toString();
+
+        switch (action) {
+            case "pinLocation":
+                String location = configuration.get("location").toString();
+                String fromTime = configuration.containsKey("fromTime") ? configuration.get("fromTime").toString() : null;
+                String toTIme = configuration.containsKey("toTime") ? configuration.get("toTime").toString() : null;
+                clockFactory.pinLocationForUser(id, location, fromTime, toTIme);
+                break;
+            case "unpinLocation":
+                clockFactory.unpinLocation(id);
+                break;
+        }
+        
+        return Collections.singletonMap("status", "OK");
     }
 
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "User not found")
